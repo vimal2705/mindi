@@ -9,3 +9,4 @@ coverage
 .vite
 *.tsbuildinfo
 apps/server/prisma/dev.db
+.vercel
