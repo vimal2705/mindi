@@ -9,7 +9,7 @@ interface AuthState {
   sessionToken: string | null;
   darkMode: boolean;
   soundEnabled: boolean;
-  login: (displayName?: string) => Promise<void>;
+  login: (displayName?: string, onProgress?: (message: string) => void) => Promise<void>;
   logout: () => void;
   setSessionToken: (token: string) => void;
   toggleDarkMode: () => void;
@@ -24,8 +24,8 @@ export const useAuthStore = create<AuthState>()(
       sessionToken: null,
       darkMode: true,
       soundEnabled: true,
-      login: async (displayName) => {
-        const result = await guestLogin(displayName);
+      login: async (displayName, onProgress) => {
+        const result = await guestLogin(displayName, onProgress);
         set({ token: result.token, user: result.user });
       },
       logout: () => set({ token: null, user: null, sessionToken: null }),

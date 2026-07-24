@@ -18,6 +18,7 @@ export function getSocket(token: string) {
     reconnectionAttempts: Infinity,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
+    timeout: 60_000,
   });
 
   return socket;

@@ -10,15 +10,21 @@ export function HomePage() {
   const { emit } = useSocket();
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState('');
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
     setLoading(true);
     setError('');
+    setStatus('Starting...');
     try {
-      await login(displayName || undefined);
+      await login(displayName || undefined, setStatus);
+      setStatus('');
     } catch {
-      setError('Failed to login. Is the server running?');
+      setError(
+        'Could not reach the game server. On free hosting it may take up to 60 seconds to wake up — please try again.',
+      );
+      setStatus('');
     } finally {
       setLoading(false);
     }
@@ -60,7 +66,8 @@ export function HomePage() {
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             placeholder="Enter display name (optional)"
-            className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500"
+            disabled={loading}
+            className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
           />
           <button
             type="button"
@@ -68,8 +75,11 @@ export function HomePage() {
             disabled={loading}
             className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 py-3 rounded-xl font-bold text-lg"
           >
-            {loading ? 'Joining...' : 'Play as Guest'}
+            {loading ? 'Connecting...' : 'Play as Guest'}
           </button>
+          {status && (
+            <p className="text-amber-300 text-sm text-center animate-pulse">{status}</p>
+          )}
         </div>
       ) : (
         <div className="glass rounded-2xl p-6 w-full max-w-md space-y-3">
@@ -100,7 +110,7 @@ export function HomePage() {
         </div>
       )}
 
-      {error && <p className="text-red-400 mt-4 text-sm">{error}</p>}
+      {error && <p className="text-red-400 mt-4 text-sm text-center max-w-md">{error}</p>}
 
       <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl text-center text-sm text-slate-500">
         <div>4 Players</div>
