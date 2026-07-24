@@ -9,7 +9,7 @@ import {
   GamePhase,
   RoomVisibility,
 } from '@mindi-coat/shared';
-import { env, isAllowedOrigin } from '../config/env.js';
+import { isAllowedOrigin } from '../config/env.js';
 import { authService } from '../services/AuthService.js';
 import { roomService } from '../services/RoomService.js';
 import { roomManager } from '../engine/RoomManager.js';
