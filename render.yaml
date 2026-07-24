@@ -31,6 +31,4 @@ services:
       - key: ADMIN_SECRET
         generateValue: true
       - key: CLIENT_URL
-        sync: false
-      - key: PORT
-        value: 10000
+        value: https://mindi-coat.vercel.app
