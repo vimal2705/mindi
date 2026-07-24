@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: mindi-coat-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mindi
+      POSTGRES_PASSWORD: mindi_secret
+      POSTGRES_DB: mindi_coat
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U mindi -d mindi_coat']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: mindi-coat-server
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://mindi:mindi_secret@postgres:5432/mindi_coat
+      JWT_SECRET: docker-dev-jwt-secret-change-in-production
+      CLIENT_URL: http://localhost:5173
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    container_name: mindi-coat-client
+    restart: unless-stopped
+    ports:
+      - '5173:80'
+    depends_on:
+      - server
+
+volumes:
+  postgres_data:

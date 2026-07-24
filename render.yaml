@@ -1,0 +1,36 @@
+databases:
+  - name: mindi-coat-db
+    databaseName: mindi_coat
+    user: mindi
+    plan: free
+
+services:
+  - type: web
+    name: mindi-coat-api
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: >-
+      npm install &&
+      sed -i.bak 's/provider = "sqlite"/provider = "postgresql"/' apps/server/prisma/schema.prisma &&
+      npm run build -w @mindi-coat/shared &&
+      npm run db:generate -w @mindi-coat/server &&
+      npm run build -w @mindi-coat/server
+    preDeployCommand: npm run db:push -w @mindi-coat/server
+    startCommand: node apps/server/dist/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mindi-coat-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        sync: false
+      - key: PORT
+        value: 10000

@@ -1,0 +1,22 @@
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package.json package-lock.json* ./
+COPY apps/server/package.json apps/server/
+COPY apps/client/package.json apps/client/
+COPY packages/shared/package.json packages/shared/
+RUN npm ci
+COPY . .
+RUN npm run build -w @mindi-coat/shared && npm run db:generate -w @mindi-coat/server && npm run build -w @mindi-coat/server
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/server/dist ./apps/server/dist
+COPY --from=builder /app/apps/server/package.json ./apps/server/
+COPY --from=builder /app/apps/server/prisma ./apps/server/prisma
+COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
+COPY --from=builder /app/packages/shared/package.json ./packages/shared/
+EXPOSE 3001
+CMD ["node", "apps/server/dist/index.js"]

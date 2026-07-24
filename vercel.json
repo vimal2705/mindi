@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build -w @mindi-coat/shared && npm run db:generate -w @mindi-coat/server && npm run build -w @mindi-coat/client",
+  "outputDirectory": "apps/client/dist",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}

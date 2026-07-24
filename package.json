@@ -1,0 +1,31 @@
+{
+  "name": "mindi-coat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mindi Coat - Multiplayer Indian card game",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "postinstall": "npm run db:generate -w @mindi-coat/server",
+    "dev": "concurrently -n client,server -c cyan,magenta \"npm run dev -w @mindi-coat/client\" \"npm run dev -w @mindi-coat/server\"",
+    "build": "npm run build -w @mindi-coat/shared && npm run build -w @mindi-coat/server && npm run build -w @mindi-coat/client",
+    "test": "npm run test -w @mindi-coat/shared && npm run test -w @mindi-coat/server && npm run test -w @mindi-coat/client",
+    "lint": "npm run lint -w @mindi-coat/client && npm run lint -w @mindi-coat/server",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "db:generate": "npm run db:generate -w @mindi-coat/server",
+    "db:push": "npm run db:push -w @mindi-coat/server",
+    "db:seed": "npm run db:seed -w @mindi-coat/server",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
